@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 use std::fmt::{Display, Formatter};
 
-#[derive(PartialEq)]
+#[derive(PartialEq, Clone)]
 pub enum MathsObject {
     MathsSet(MathsSet),
     OrderedPair(Box<OrderedPair>),
@@ -11,28 +11,9 @@ pub enum MathsObject {
 impl Display for MathsObject {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            MathsObject::MathsSet(maths_set) => {write!(f, "{}", maths_set)}
-            MathsObject::OrderedPair(ordered_pair) => {write!(f, "{}", ordered_pair)}
-            MathsObject::Number(number) => {write!(f, "{}", number)}
-        }
-    }
-}
-
-impl Clone for MathsObject {
-    fn clone(&self) -> Self {
-        match self {
-            MathsObject::MathsSet(maths_set) => {
-                let elements = &maths_set.elements;
-
-                return MathsObject::MathsSet(MathsSet { elements: elements.clone() });
-            },
-            MathsObject::OrderedPair(ordered_pair) => {
-                let a = &ordered_pair.a;
-                let b = &ordered_pair.b;
-
-                return MathsObject::OrderedPair(Box::new(OrderedPair { a: a.clone(), b: b.clone() }))
-            },
-            MathsObject::Number(number) => MathsObject::Number(*number)
+            MathsObject::MathsSet(maths_set) => write!(f, "{}", maths_set),
+            MathsObject::OrderedPair(ordered_pair) => write!(f, "{}", ordered_pair),
+            MathsObject::Number(number) => write!(f, "{}", number)
         }
     }
 }
@@ -109,6 +90,13 @@ impl PartialEq<Self> for MathsSet {
     }
 }
 
+impl Clone for MathsSet {
+    fn clone(&self) -> Self {
+        let elements = &self.elements;
+        return MathsSet { elements: elements.clone() };
+    }
+}
+
 pub struct OrderedPair {
     a: MathsObject,
     b: MathsObject
@@ -137,6 +125,15 @@ impl Display for OrderedPair {
 impl PartialEq for OrderedPair {
     fn eq(&self, other: &Self) -> bool {
         self.a == other.a && self.b == other.b
+    }
+}
+
+impl Clone for OrderedPair {
+    fn clone(&self) -> Self {
+        let a = &self.a;
+        let b = &self.b;
+
+        return OrderedPair { a: a.clone(), b: b.clone() }
     }
 }
 
