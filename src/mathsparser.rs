@@ -10,11 +10,11 @@ pub enum MathsObject {
 
 impl Display for MathsObject {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        match self {
+        return match self {
             MathsObject::MathsSet(maths_set) => write!(f, "{}", maths_set),
             MathsObject::OrderedPair(ordered_pair) => write!(f, "{}", ordered_pair),
             MathsObject::Number(number) => write!(f, "{}", number)
-        }
+        };
     }
 }
 
@@ -71,22 +71,22 @@ impl Display for MathsSet {
         for (index, element) in self.elements.iter().enumerate() {
             string.push_str(&element.to_string());
             if index < self.elements.len() - 1 {
-                string.push_str(",");
+                string.push(',');
             }
         }
-        write!(f, "{{{}}}", string)
+        return write!(f, "{{{}}}", string);
     }
 }
 
 impl PartialEq<Self> for MathsSet {
     fn eq(&self, other: &Self) -> bool {
         if !self.elements.iter().all(|element| other.elements.contains(element)) {
-            return false
+            return false;
         }
         if !other.elements.iter().all(|element| self.elements.contains(element)) {
-            return false
+            return false;
         }
-        return true
+        return true;
     }
 }
 
@@ -112,19 +112,19 @@ impl OrderedPair {
         right_elements.push(self.b.clone());
         elements.push( MathsObject::MathsSet(MathsSet { elements: left_elements }));
         elements.push(MathsObject::MathsSet(MathsSet { elements: right_elements }));
-        return MathsSet { elements }
+        return MathsSet { elements };
     }
 }
 
 impl Display for OrderedPair {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        write!(f, "({},{})", self.a, self.b)
+        return write!(f, "({},{})", self.a, self.b);
     }
 }
 
 impl PartialEq for OrderedPair {
     fn eq(&self, other: &Self) -> bool {
-        self.a == other.a && self.b == other.b
+        return self.a == other.a && self.b == other.b;
     }
 }
 
@@ -133,14 +133,14 @@ impl Clone for OrderedPair {
         let a = &self.a;
         let b = &self.b;
 
-        return OrderedPair { a: a.clone(), b: b.clone() }
+        return OrderedPair { a: a.clone(), b: b.clone() };
     }
 }
 
 impl MathsObject {
     pub fn from_string(maths_string: &str) -> Option<MathsObject> {
         let chars = maths_string.trim().chars().collect::<Vec<_>>();
-        MathsObject::parse_maths_object(&chars)
+        return MathsObject::parse_maths_object(&chars);
     }
 
     fn parse_maths_object(chars: &[char]) -> Option<MathsObject> {
@@ -161,7 +161,7 @@ impl MathsObject {
             let j = MathsObject::find_closing(&chars, '(');
             return Some(MathsObject::OrderedPair(Box::new(MathsObject::parse_ordered_pair(&chars[1..j]))));
         }
-        return Some(MathsObject::Number(chars.iter().collect::<String>().parse::<i32>().unwrap()))
+        return Some(MathsObject::Number(chars.iter().collect::<String>().parse::<i32>().unwrap()));
     }
 
     fn parse_maths_set(chars: &[char]) -> MathsSet {
@@ -169,15 +169,12 @@ impl MathsObject {
         let mut start = 0;
         while start < chars.len() {
             let end = MathsObject::find_closing(&chars[start..], ',') + start;
-            match MathsObject::parse_maths_object(&chars[start..end]) {
-                Some(element) => {
-                    if !elements.contains(&element) {
-                        elements.push(element)
-                    }
-                },
-                None => {}
+            if let Some(element) = MathsObject::parse_maths_object(&chars[start..end]) {
+                if !elements.contains(&element) {
+                    elements.push(element);
+                }
             }
-            start = end + 1
+            start = end + 1;
         }
         return MathsSet { elements };
     }
@@ -215,18 +212,16 @@ impl MathsObject {
         let mut i = 0;
         while i < chars.len() {
             let char = chars[i];
-            match close_brackets.get(&char) {
-                Some(_) => stack.push(char),
-                None => {}
-            };
-            match open_brackets.get(&char) {
-                Some(_) => stack.pop(),
-                None => None
-            };
+            if close_brackets.get(&char).is_some() {
+                stack.push(char);
+            }
+            if open_brackets.get(&char).is_some() {
+                stack.pop();
+            }
             if char == *closing && stack.is_empty() {
                 return i;
             }
-            i += 1
+            i += 1;
         }
         return i;
     }
