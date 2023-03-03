@@ -10,6 +10,10 @@ pub enum MathsObject {
     Number(i32),
 }
 
+pub trait AsMathsSet {
+    fn as_maths_set(&self) -> MathsSet;
+}
+
 impl Display for MathsObject {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         return match self {
@@ -17,6 +21,16 @@ impl Display for MathsObject {
             MathsObject::OrderedPair(ordered_pair) => write!(f, "{}", ordered_pair),
             MathsObject::Number(number) => write!(f, "{}", number)
         };
+    }
+}
+
+impl AsMathsSet for MathsObject {
+    fn as_maths_set(&self) -> MathsSet {
+        return match self {
+            MathsObject::MathsSet(maths_set) => maths_set.as_maths_set(),
+            MathsObject::OrderedPair(ordered_pair) => ordered_pair.as_maths_set(),
+            MathsObject::Number(number) => number.as_maths_set(),
+        }
     }
 }
 
@@ -99,22 +113,14 @@ impl Clone for MathsSet {
     }
 }
 
-pub struct OrderedPair {
-    pair: (MathsObject, MathsObject)
+impl AsMathsSet for MathsSet {
+    fn as_maths_set(&self) -> Self {
+        return self.clone();
+    }
 }
 
-impl OrderedPair {
-    pub fn as_maths_set(&self) -> MathsSet {
-        let mut elements = Vec::new();
-        let mut left_elements = Vec::new();
-        let mut right_elements = Vec::new();
-        left_elements.push(self.pair.0.clone());
-        right_elements.push(self.pair.0.clone());
-        right_elements.push(self.pair.1.clone());
-        elements.push( MathsObject::MathsSet(MathsSet { elements: left_elements }));
-        elements.push(MathsObject::MathsSet(MathsSet { elements: right_elements }));
-        return MathsSet { elements };
-    }
+pub struct OrderedPair {
+    pair: (MathsObject, MathsObject)
 }
 
 impl Display for OrderedPair {
@@ -134,6 +140,31 @@ impl Clone for OrderedPair {
         let pair = &self.pair;
 
         return OrderedPair { pair: pair.clone() };
+    }
+}
+
+impl AsMathsSet for OrderedPair {
+    fn as_maths_set(&self) -> MathsSet {
+        let mut elements = Vec::new();
+        let mut left_elements = Vec::new();
+        let mut right_elements = Vec::new();
+        left_elements.push(self.pair.0.clone());
+        right_elements.push(self.pair.0.clone());
+        right_elements.push(self.pair.1.clone());
+        elements.push( MathsObject::MathsSet(MathsSet { elements: left_elements }));
+        elements.push(MathsObject::MathsSet(MathsSet { elements: right_elements }));
+        return MathsSet { elements };
+    }
+}
+
+impl AsMathsSet for i32 {
+    fn as_maths_set(&self) -> MathsSet {
+        if *self == 0 {
+            return MathsSet { elements: Vec::new() }
+        }
+        let mut predecessor = (self - 1).as_maths_set();
+        predecessor.elements.push(MathsObject::MathsSet(predecessor.clone()));
+        return predecessor;
     }
 }
 
