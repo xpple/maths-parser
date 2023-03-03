@@ -1,3 +1,5 @@
+#![allow(clippy::needless_return)]
+
 use std::collections::HashMap;
 use std::fmt::{Display, Formatter};
 
@@ -56,10 +58,10 @@ impl MathsSet {
         }
 
         if left_element == right_element_one {
-            return Some(OrderedPair { a: left_element.clone(), b: right_element_two.clone() });
+            return Some(OrderedPair { pair: (left_element.clone(), right_element_two.clone()) });
         }
         if left_element == right_element_two {
-            return Some(OrderedPair { a: left_element.clone(), b: right_element_one.clone() });
+            return Some(OrderedPair { pair: (left_element.clone(), right_element_one.clone()) });
         }
         return None;
     }
@@ -98,8 +100,7 @@ impl Clone for MathsSet {
 }
 
 pub struct OrderedPair {
-    a: MathsObject,
-    b: MathsObject
+    pair: (MathsObject, MathsObject)
 }
 
 impl OrderedPair {
@@ -107,9 +108,9 @@ impl OrderedPair {
         let mut elements = Vec::new();
         let mut left_elements = Vec::new();
         let mut right_elements = Vec::new();
-        left_elements.push(self.a.clone());
-        right_elements.push(self.a.clone());
-        right_elements.push(self.b.clone());
+        left_elements.push(self.pair.0.clone());
+        right_elements.push(self.pair.0.clone());
+        right_elements.push(self.pair.1.clone());
         elements.push( MathsObject::MathsSet(MathsSet { elements: left_elements }));
         elements.push(MathsObject::MathsSet(MathsSet { elements: right_elements }));
         return MathsSet { elements };
@@ -118,22 +119,21 @@ impl OrderedPair {
 
 impl Display for OrderedPair {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        return write!(f, "({},{})", self.a, self.b);
+        return write!(f, "({},{})", self.pair.0, self.pair.1);
     }
 }
 
 impl PartialEq for OrderedPair {
     fn eq(&self, other: &Self) -> bool {
-        return self.a == other.a && self.b == other.b;
+        return self.pair == other.pair;
     }
 }
 
 impl Clone for OrderedPair {
     fn clone(&self) -> Self {
-        let a = &self.a;
-        let b = &self.b;
+        let pair = &self.pair;
 
-        return OrderedPair { a: a.clone(), b: b.clone() };
+        return OrderedPair { pair: pair.clone() };
     }
 }
 
@@ -152,7 +152,7 @@ impl MathsObject {
             let j = MathsObject::find_closing(&chars, '{');
             let maths_set = MathsObject::parse_maths_set(&chars[1..j]);
             return match maths_set.as_ordered_pair() {
-                Some(ordered_pair) => Some(MathsObject::OrderedPair(Box::from(ordered_pair))),
+                Some(ordered_pair) => Some(MathsObject::OrderedPair(Box::new(ordered_pair))),
                 //Some(_) => Some(MathsObject::MathsSet(maths_set)),
                 None => Some(MathsObject::MathsSet(maths_set))
             };
@@ -183,7 +183,7 @@ impl MathsObject {
         let j = MathsObject::find_closing(&chars, ',');
         let a = MathsObject::parse_maths_object(&chars[..j]).unwrap();
         let b = MathsObject::parse_maths_object(&chars[j + 1..]).unwrap();
-        return OrderedPair { a, b };
+        return OrderedPair { pair: (a, b) };
     }
 
     pub fn replace_natural_numbers(&self) -> String {
