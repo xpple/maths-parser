@@ -1,13 +1,15 @@
-use crate::mathsparser::{AsMathsSet, MathsObject};
+use crate::objects::mathsobject::ToMathsSet;
+use crate::parser::mathsparser::MathsParser;
 
-mod mathsparser;
+mod parser;
+mod objects;
 
 fn main() {
     println!("Enter your mathematical object below.");
     let mut maths_string: String = String::new();
     std::io::stdin().read_line(&mut maths_string).unwrap();
-    let maths_object = MathsObject::from_string(&maths_string).unwrap();
+    let maths_object = MathsParser::from_string(&maths_string).unwrap();
     println!("{}", maths_object);
-    println!("{}", maths_object.replace_natural_numbers());
-    println!("{}", maths_object.as_maths_set())
+    println!("{}", MathsParser::replace_natural_numbers(maths_object.clone()));
+    println!("{}", maths_object.to_maths_set())
 }
