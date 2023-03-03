@@ -16,7 +16,7 @@ impl ToMathsSet for MathsObject {
             MathsObject::MathsSet(maths_set) => maths_set.to_maths_set(),
             MathsObject::OrderedPair(ordered_pair) => ordered_pair.to_maths_set(),
             MathsObject::NaturalNumber(natural_number) => natural_number.to_maths_set()
-        }
+        };
     }
 }
 

@@ -26,12 +26,6 @@ impl Display for OrderedPair {
     }
 }
 
-impl PartialEq for OrderedPair {
-    fn eq(&self, other: &Self) -> bool {
-        return self.pair == other.pair;
-    }
-}
-
 impl Clone for OrderedPair {
     fn clone(&self) -> Self {
         return OrderedPair { pair: self.pair.clone() };

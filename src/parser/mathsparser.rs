@@ -19,7 +19,7 @@ impl MathsParser {
         }
         let char = chars[0];
         if char == '{' {
-            let j = MathsParser::find_closing(&chars, '{');
+            let j = MathsParser::find_closing(chars, '{');
             let maths_set = MathsParser::parse_maths_set(&chars[1..j]);
             return match maths_set.as_ordered_pair() {
                 Some(ordered_pair) => Some(MathsObject::OrderedPair(Box::new(ordered_pair))),
@@ -27,7 +27,7 @@ impl MathsParser {
             };
         }
         if char == '(' {
-            let j = MathsParser::find_closing(&chars, '(');
+            let j = MathsParser::find_closing(chars, '(');
             return Some(MathsObject::OrderedPair(Box::new(MathsParser::parse_ordered_pair(&chars[1..j]))));
         }
         return Some(MathsObject::NaturalNumber(NaturalNumber { natural_number: chars.iter().collect::<String>().parse::<i32>().unwrap() }));
@@ -49,7 +49,7 @@ impl MathsParser {
     }
 
     fn parse_ordered_pair(chars: &[char]) -> OrderedPair {
-        let j = MathsParser::find_closing(&chars, ',');
+        let j = MathsParser::find_closing(chars, ',');
         let a = MathsParser::parse_maths_object(&chars[..j]).unwrap();
         let b = MathsParser::parse_maths_object(&chars[j + 1..]).unwrap();
         return OrderedPair { pair: (a, b) };

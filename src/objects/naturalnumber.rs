@@ -23,12 +23,6 @@ impl Display for NaturalNumber {
     }
 }
 
-impl PartialEq for NaturalNumber {
-    fn eq(&self, other: &Self) -> bool {
-        return self.natural_number.eq(&other.natural_number);
-    }
-}
-
 impl Clone for NaturalNumber {
     fn clone(&self) -> Self {
         return NaturalNumber { natural_number: self.natural_number };
