@@ -1,4 +1,3 @@
-use crate::objects::mathsobject::ToMathsSet;
 use crate::parser::mathsparser::MathsParser;
 
 mod parser;
@@ -10,6 +9,4 @@ fn main() {
     std::io::stdin().read_line(&mut maths_string).unwrap();
     let maths_object = MathsParser::from_string(&maths_string).unwrap();
     println!("{}", maths_object);
-    println!("{}", MathsParser::replace_natural_numbers(maths_object.clone()));
-    println!("{}", maths_object.to_maths_set())
 }

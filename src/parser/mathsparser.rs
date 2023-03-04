@@ -20,11 +20,7 @@ impl MathsParser {
         let char = chars[0];
         if char == '{' {
             let j = MathsParser::find_closing(chars, '{');
-            let maths_set = MathsParser::parse_maths_set(&chars[1..j]);
-            return match maths_set.as_ordered_pair() {
-                Some(ordered_pair) => Some(MathsObject::OrderedPair(Box::new(ordered_pair))),
-                None => Some(MathsObject::MathsSet(maths_set))
-            };
+            return Some(MathsObject::MathsSet(MathsParser::parse_maths_set(&chars[1..j])));
         }
         if char == '(' {
             let j = MathsParser::find_closing(chars, '(');
