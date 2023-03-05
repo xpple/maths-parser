@@ -4,8 +4,7 @@ use crate::objects::mathsset::MathsSet;
 use crate::objects::naturalnumber::NaturalNumber;
 use crate::objects::orderedpair::OrderedPair;
 
-pub struct MathsParser {
-}
+pub struct MathsParser;
 
 impl MathsParser {
     pub fn from_string(maths_string: &str) -> Option<MathsObject> {
@@ -14,19 +13,18 @@ impl MathsParser {
     }
 
     fn parse_maths_object(chars: &[char]) -> Option<MathsObject> {
-        if chars.is_empty() {
-            return None;
-        }
-        let char = chars[0];
-        if char == '{' {
-            let j = MathsParser::find_closing(chars, '{');
-            return Some(MathsObject::MathsSet(MathsParser::parse_maths_set(&chars[1..j])));
-        }
-        if char == '(' {
-            let j = MathsParser::find_closing(chars, '(');
-            return Some(MathsObject::OrderedPair(Box::new(MathsParser::parse_ordered_pair(&chars[1..j]))));
-        }
-        return Some(MathsObject::NaturalNumber(NaturalNumber { natural_number: chars.iter().collect::<String>().parse::<i32>().unwrap() }));
+        return match chars.get(0) {
+            None => None,
+            Some('{') => {
+                let j = MathsParser::find_closing(chars, '{');
+                return Some(MathsObject::MathsSet(MathsParser::parse_maths_set(&chars[1..j])));
+            },
+            Some('(') => {
+                let j = MathsParser::find_closing(chars, '(');
+                return Some(MathsObject::OrderedPair(Box::new(MathsParser::parse_ordered_pair(&chars[1..j]))));
+            },
+            _ => Some(MathsObject::NaturalNumber(NaturalNumber { natural_number: chars.iter().collect::<String>().parse::<u32>().unwrap() }))
+        };
     }
 
     fn parse_maths_set(chars: &[char]) -> MathsSet {
@@ -74,20 +72,17 @@ impl MathsParser {
             None => &next
         };
         let mut stack = Vec::new();
-        let mut i = 0;
-        while i < chars.len() {
-            let char = chars[i];
+        for (i, char) in chars.iter().enumerate() {
             if close_brackets.get(&char).is_some() {
                 stack.push(char);
             }
             if open_brackets.get(&char).is_some() {
                 stack.pop();
             }
-            if char == *closing && stack.is_empty() {
+            if char == closing && stack.is_empty() {
                 return i;
             }
-            i += 1;
         }
-        return i;
+        return chars.len();
     }
 }

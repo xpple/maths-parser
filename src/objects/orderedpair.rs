@@ -2,6 +2,7 @@ use std::fmt::{Display, Formatter};
 use crate::objects::mathsobject::{MathsObject, ToMathsSet};
 use crate::objects::mathsset::MathsSet;
 
+#[derive(Clone)]
 pub struct OrderedPair {
     pub pair: (MathsObject, MathsObject)
 }
@@ -23,11 +24,5 @@ impl ToMathsSet for OrderedPair {
 impl Display for OrderedPair {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         return write!(f, "({},{})", self.pair.0, self.pair.1);
-    }
-}
-
-impl Clone for OrderedPair {
-    fn clone(&self) -> Self {
-        return OrderedPair { pair: self.pair.clone() };
     }
 }

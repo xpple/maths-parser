@@ -2,8 +2,9 @@ use std::fmt::{Display, Formatter};
 use crate::objects::mathsobject::{MathsObject, ToMathsSet};
 use crate::objects::mathsset::MathsSet;
 
+#[derive(Clone)]
 pub struct NaturalNumber {
-    pub natural_number: i32
+    pub natural_number: u32
 }
 
 impl ToMathsSet for NaturalNumber {
@@ -20,11 +21,5 @@ impl ToMathsSet for NaturalNumber {
 impl Display for NaturalNumber {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         return self.natural_number.fmt(f);
-    }
-}
-
-impl Clone for NaturalNumber {
-    fn clone(&self) -> Self {
-        return NaturalNumber { natural_number: self.natural_number };
     }
 }
