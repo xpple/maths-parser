@@ -7,7 +7,7 @@ pub struct MathsSet {
 }
 
 impl MathsSet {
-    pub fn as_ordered_pair(&self) -> Option<OrderedPair> {
+    pub fn to_ordered_pair(&self) -> Option<OrderedPair> {
         if self.elements.len() != 2 {
             return None;
         }

@@ -46,9 +46,9 @@ impl MathsParser {
 
     fn parse_ordered_pair(chars: &[char]) -> OrderedPair {
         let j = MathsParser::find_closing(chars, ',');
-        let a = MathsParser::parse_maths_object(&chars[..j]).unwrap();
-        let b = MathsParser::parse_maths_object(&chars[j + 1..]).unwrap();
-        return OrderedPair { pair: (a, b) };
+        let left = MathsParser::parse_maths_object(&chars[..j]).unwrap();
+        let right = MathsParser::parse_maths_object(&chars[j + 1..]).unwrap();
+        return OrderedPair { pair: (left, right) };
     }
 
     pub fn replace_natural_numbers(maths_object: MathsObject) -> String {
